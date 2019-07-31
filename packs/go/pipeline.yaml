@@ -3,8 +3,32 @@ extends:
   file: go/pipeline.yaml
 pipelines:
   pullRequest:
+    setup:
+      steps:
+      - sh: go get github.com/google/uuid
+        name: get-uuid
+      - sh: go get -u github.com/gorilla/mux
+        name: get-mux
+      - sh: go get -u github.com/cweill/gotests/...
+        name: get-gotests
+      - sh: go get github.com/tebeka/go2xunit/...
+        name: get-go2xunit
+      - sh: go get github.com/securego/gosec/cmd/gosec/...
+        name: get-gosec
+      - sh: go get github.com/securego/gosec
+        name: get-securego-gosec
     build:
       steps:
+      - sh: ./bin/gotests -all
+        name: generate-go-unit-test
+      - sh: go test -v |./bin/go2xunit > test_unit_output.xml
+        name: run-go-test
+      - sh: go test -coverprofile=coverage.out
+        name: run-go-test-coverage
+      - sh: go tool cover -func=coverage.out
+        name: run-go-test-coverage-analysis > test_coverage_output.out
+      - sh: ./bin/gosec -fmt=json -out test_security_output.json
+        name: run-go-sec-test
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
     postBuild:
@@ -21,8 +45,32 @@ pipelines:
           name: jx-preview
 
   release:
+    setup:
+      steps:
+      - sh: go get github.com/google/uuid
+        name: get-uuid
+      - sh: go get -u github.com/gorilla/mux
+        name: get-mux
+      - sh: go get -u github.com/cweill/gotests/...
+        name: get-gotests
+      - sh: go get github.com/tebeka/go2xunit/...
+        name: get-go2xunit
+      - sh: go get github.com/securego/gosec/cmd/gosec/...
+        name: get-gosec
+      - sh: go get github.com/securego/gosec
+        name: get-securego-gosec
     build:
       steps:
+      - sh: ./bin/gotests -all
+        name: generate-go-unit-test
+      - sh: go test -v |./bin/go2xunit > test_unit_output.xml
+        name: run-go-test
+      - sh: go test -coverprofile=coverage.out
+        name: run-go-test-coverage
+      - sh: go tool cover -func=coverage.out
+        name: run-go-test-coverage-analysis > test_coverage_output.out
+      - sh: ./bin/gosec -fmt=json -out test_security_output.json
+        name: run-go-sec-test
       - sh: export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml
         name: container-build
       - sh: jx step post build --image $DOCKER_REGISTRY/$ORG/$APP_NAME:\$(cat VERSION)

@@ -1,5 +1,5 @@
 extends:
-  import: kubernetes
+  import: classic
   file: go/pipeline.yaml
 pipelines:
   pullRequest:

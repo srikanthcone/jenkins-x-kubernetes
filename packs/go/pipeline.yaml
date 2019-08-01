@@ -25,9 +25,9 @@ pipelines:
         name: run-go-test
       - sh: go test -coverprofile=coverage.out
         name: run-go-test-coverage
-      - sh: go tool cover -func=coverage.out
-        name: run-go-test-coverage-analysis > test_coverage_output.out
-      - sh "gosec -include=G505 -exclude=G101,G102,G103,G104,G105,G106,G107,G201,G202,G203,G204,G301,G302,G303,G304,G305,G401,G402,G403,G404,G501,G502,G503,G504 -nosec=true -fmt=json -out=test_security_output.json ."
+      - sh: go tool cover -func=coverage.out > test_coverage_output.out
+        name: run-go-test-coverage-analysis
+      - sh: gosec -include=G505 -exclude=G101,G102,G103,G104,G105,G106,G107,G201,G202,G203,G204,G301,G302,G303,G304,G305,G401,G402,G403,G404,G501,G502,G503,G504 -nosec=true -fmt=json -out=test_security_output.json .
         name: run-go-sec-test
       - sh: export VERSION=$PREVIEW_VERSION && skaffold build -f skaffold.yaml
         name: container-build
@@ -67,9 +67,9 @@ pipelines:
         name: run-go-test
       - sh: go test -coverprofile=coverage.out
         name: run-go-test-coverage
-      - sh: go tool cover -func=coverage.out
-        name: run-go-test-coverage-analysis > test_coverage_output.out
-      - sh "gosec -include=G505 -exclude=G101,G102,G103,G104,G105,G106,G107,G201,G202,G203,G204,G301,G302,G303,G304,G305,G401,G402,G403,G404,G501,G502,G503,G504 -nosec=true -fmt=json -out=test_security_output.json ."
+      - sh: go tool cover -func=coverage.out > test_coverage_output.out
+        name: run-go-test-coverage-analysis
+      - sh: gosec -include=G505 -exclude=G101,G102,G103,G104,G105,G106,G107,G201,G202,G203,G204,G301,G302,G303,G304,G305,G401,G402,G403,G404,G501,G502,G503,G504 -nosec=true -fmt=json -out=test_security_output.json .
         name: run-go-sec-test
       - sh: export VERSION=`cat VERSION` && skaffold build -f skaffold.yaml
         name: container-build

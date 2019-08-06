@@ -24,3 +24,24 @@ kubectl -n istio-system get service istio-ingressgateway \
 
 The cluster is configured.
 
+To get canary events run use below command
+
+kubectl -n jx-production get events --watch \
+  --field-selector involvedObject.kind=Canary
+
+Flagger includes a Grafana dashboard for visualization purposes
+
+kubectl --namespace istio-system port-forward deploy/flagger-grafana 3000
+
+Then accessing http://localhost:3000 using admin/admin, selecting the canary-analysis dashboard and
+
+    namespace: jx-production
+    primary: jx-production-myapp-primary
+    canary: jx-production-myapp
+
+would provide us with a view of different metrics (cpu, memory, request duration, response errors,…) of 
+the incumbent and new versions side by side.
+
+  
+  
+
